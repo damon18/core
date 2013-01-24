@@ -49,7 +49,6 @@ class CategoryUtil
 
         /** @var \Zikula\Core\Doctrine\Entity\CategoryEntity $rootCat */
         $rootCat = self::getCategoryByPath($rootPath);
-//        var_dump($rootCat);die;
         if (!$rootCat) {
             return LogUtil::registerError(__f("Error! Non-existing root category '%s' received", $rootPath));
         }
@@ -96,24 +95,26 @@ class CategoryUtil
         }
 
         // get entity manager
+        /** @var $em \Doctrine\ORM\EntityManager */
         $em = \ServiceUtil::get('doctrine.entitymanager');
 
         // get category
         $category = $em->find('Zikula\Core\Doctrine\Entity\CategoryEntity', $cid);
 
         // convert to array
-        $category = $category->toArray();
+        $cat = $category->toArray();
 
         // assign parent_id
-        $category['parent_id'] = $category['parent']->getId();
+        // this makes the rootcat's parent 0 as it's stored as null in the database
+        $cat['parent_id'] = (null === $cat['parent']) ? null : $category['parent']->getId();
 
         // get attributes
-        $category['__ATTRIBUTES__'] = array();
-        foreach ($category['attributes'] as $attribute) {
-            $category['__ATTRIBUTES__'][$attribute['name']] = $attribute['value'];
+        $cat['__ATTRIBUTES__'] = array();
+        foreach ($cat['attributes'] as $attribute) {
+            $cat['__ATTRIBUTES__'][$attribute['name']] = $attribute['value'];
         }
 
-        return $category;
+        return $cat;
     }
 
     /**
@@ -154,15 +155,16 @@ class CategoryUtil
 
         $cats = array();
         foreach ($categories as $category) {
-            $category = $category->toArray();
+            $cat = $category->toArray();
 
-            $category['parent_id'] = $category['parent']->getId();
-            $category['accessible'] = SecurityUtil::checkPermission('Categories::Category', $category['id'] . ':' . $category['path'] . ':' . $category['ipath'], ACCESS_OVERVIEW);
+            // this makes the rotocat's parent 0 as it's stored as null in the database
+            $cat['parent_id'] = (null === $cat['parent']) ? null : $category['parent']->getId();
+            $cat['accessible'] = SecurityUtil::checkPermission('Categories::Category', $category['id'] . ':' . $category['path'] . ':' . $category['ipath'], ACCESS_OVERVIEW);
 
             if (!empty($assocKey)) {
-                $cats[$category[$assocKey]] = $category;
+                $cats[$category[$assocKey]] = $cat;
             } else {
-                $cats[] = $category;
+                $cats[] = $cat;
             }
         }
 
@@ -298,7 +300,7 @@ class CategoryUtil
         do {
             $cat = $cat['parent'];
             $cats[$cat[$assocKey]] = $cat->toArray();
-        } while ($cat['parent']->getId() > 0);
+        } while (null !== $cat['parent']);
 
         return $cats;
     }
@@ -1473,12 +1475,12 @@ class CategoryUtil
 
         foreach ($cats as $k => $v) {
             $path = $v[$field];
-            $pid = $v['parent']->getId();
+            $pid = (null !== $v['parent']) ? $v['parent']->getId() : null;
 
             while ($pid > 0) {
                 $pcat = $cats[$pid];
                 $path = $pcat[$field] . '/' . $path;
-                $pid = $pcat['parent']->getId();
+                $pid = (null !== $pcat['parent']) ? $pcat['parent']->getId() : null;
             }
 
             $paths[$k] = '/' . $path;
