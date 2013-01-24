@@ -666,7 +666,7 @@ class CategoriesInstaller extends \Zikula_AbstractInstaller
             // we need to force the ID to be set here - drak
             // it just means we can work with the array dataset above.
             $metadata = $this->entityManager->getClassMetaData(get_class($category));
-            $metadata->setIdGeneratorType(\Doctrine\ORM\Mapping\ClassMetadataInfo::GENERATOR_TYPE_AUTO);
+            $metadata->setIdGeneratorType(\Doctrine\ORM\Mapping\ClassMetadataInfo::GENERATOR_TYPE_NONE);
 
             if ($obj['parent_id'] == 0) {
                 $obj['parent'] = null;
@@ -690,6 +690,9 @@ class CategoriesInstaller extends \Zikula_AbstractInstaller
                     $category->setAttribute($attrib_name, $attrib_key);
                 }
             }
+
+            // unset this so it doesn't persist in the next foreach
+            unset($attributes);
         }
 
         $this->entityManager->flush();
