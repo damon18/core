@@ -39,8 +39,10 @@ class CategoryRegistryUtil
         }
 
         $entity = $em->getRepository('Zikula\Core\Doctrine\Entity\CategoryRegistryEntity')->findOneBy($params);
-        $em->remove($entity);
-        $em->flush();
+        if ($entity) {
+            $em->remove($entity);
+            $em->flush();
+        }
 
         return true;
     }
@@ -131,7 +133,7 @@ class CategoryRegistryUtil
 
         $em = \ServiceUtil::get('doctrine.entitymanager');
 
-        if (isset($catreg['id']) && is_numeric($catreg['id'])) {
+        if (isset($catreg['id'])) {
             $entity = $em->getRepository('Zikula\Core\Doctrine\Entity\CategoryRegistryEntity')->find($catreg['id']);
         } else {
             $entity = new \Zikula\Core\Doctrine\Entity\CategoryRegistryEntity;
