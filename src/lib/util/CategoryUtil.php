@@ -59,16 +59,23 @@ class CategoryUtil
             $em = ServiceUtil::get('doctrine.entitymanager');
             $em->persist($cat);
             $data = array();
-            $data['parent'] = $rootCat['parent'];
+            $data['parent'] = $em->getReference('Zikula\Core\Doctrine\Entity\CategoryEntity', $rootCat['id']);
             $data['name'] = $name;
             $data['display_name'] = array($lang => $displayname);
             $data['display_desc'] = array($lang => $description);
             if ($value) {
                 $data['value'] = $value;
             }
+
+            $data['path'] = "$rootPath/$name";
+
             $cat->merge($data);
+            $em->flush();
+            $cat['ipath'] = "$rootCat[ipath]/$cat[id]";
             if ($attributes && is_array($attributes)) {
-                $cat->setAttributes($attributes);
+                foreach ($attributes as $key => $value) {
+                    $cat->setAttribute($key, $value);
+                }
             }
 //            if (!$cat->validate('admin')) {
 //                return false;
