@@ -26,53 +26,5 @@ use Zikula\Core\Doctrine\Entity\CategoryEntity;
  */
 class Zikula_Doctrine2_Entity_Category extends CategoryEntity
 {
-    public function getLocked()
-    {
-        return $this->getIs_locked();
-    }
 
-    public function setLocked($locked)
-    {
-        $this->setIs_locked($locked);
-    }
-
-    public function getLeaf()
-    {
-        return $this->getIs_leaf();
-    }
-
-    public function setLeaf($leaf)
-    {
-        $this->setIs_leaf($leaf);
-    }
-
-    public function getSortValue()
-    {
-        return $this->getSort_value();
-    }
-
-    public function setSortValue($sortValue)
-    {
-        $this->setSort_value($sortValue);
-    }
-
-    public function getDisplayName()
-    {
-        return $this->getDisplay_name();
-    }
-
-    public function setDisplayName($displayName)
-    {
-        $this->setDisplay_name($displayName);
-    }
-
-    public function getDisplayDesc()
-    {
-        return $this->getDisplay_desc();
-    }
-
-    public function setDisplayDesc($displayDesc)
-    {
-        $this->setDisplay_desc($displayDesc);
-    }
 }
