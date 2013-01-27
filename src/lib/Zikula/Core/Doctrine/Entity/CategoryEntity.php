@@ -137,7 +137,7 @@ class CategoryEntity extends EntityAccess
         $this->display_desc = array();
         $this->path = '';
         $this->ipath = '';
-        $this->status = 'I';
+        $this->status = 'A';
 
         $this->attributes = new ArrayCollection();
     }
