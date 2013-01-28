@@ -206,7 +206,6 @@ class CategoryRegistryUtil
         /** @var $rCategory Zikula\Core\Doctrine\Entity\CategoryRegistryEntity */
         foreach ($rCategories as $rCategory) {
             $rCategory = $rCategory->toArray();
-            //$fArr[$rCategory[$arraykey]] = $rCategory; // previously we only returned the ID, so this is wrong (ref @tfotis)
             $fArr[$rCategory[$arraykey]] = $rCategory['category_id'];
         }
 
